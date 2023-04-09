@@ -120,7 +120,21 @@ static ssize_t device_read(file, buffer, length, offset) //TODO
     size_t       length;  /* The length of the buffer */
     loff_t*      offset;  /* Our offset in the file */
 {
+	ssize_t bytes_read = 0;
 
+	if(length > buf_length)
+	{
+		printk(STDERR, "Reading failed: Requested more bytes than in buffer!");
+		return 0;
+	}
+
+	for(int i = 0; i < length; ++i)
+	{
+		buffer[i] = buf[i];
+		bytes_read++;
+	}
+
+	return bytes_read;
 }
 
 /* This function is called when somebody tries to write
@@ -132,18 +146,21 @@ static ssize_t device_write(file, buffer, length, offset) //TODO
 	size_t       length;  /* The length of the buffer */
 	loff_t*      offset;  /* Our offset in the file */
 {
+	ssize_t bytes_written = 0;
+
     if (length > buf_length)
     {
         printk(STDERR, "Writing Failed: Too large to fit in map\n")
-        return -1;
+        return 0;
     }
 
     for (int i = 0; i < length; i++)
     {
         buf[i] = buffer[i];
         buf_ptr = buf[i];
+		bytes_written++;
     }
-    return 0;
+    return bytes_written;
 }
 
 static ssize_t device_lseek(file, buffer, length, offset) //TODO
