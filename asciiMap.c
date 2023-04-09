@@ -132,7 +132,18 @@ static ssize_t device_write(file, buffer, length, offset) //TODO
 	size_t       length;  /* The length of the buffer */
 	loff_t*      offset;  /* Our offset in the file */
 {
+    if (length > buf_length)
+    {
+        printk(STDERR, "Writing Failed: Too large to fit in map\n")
+        return -1;
+    }
 
+    for (int i = 0; i < length; i++)
+    {
+        buf[i] = buffer[i];
+        buf_ptr = buf[i];
+    }
+    return 0;
 }
 
 static ssize_t device_lseek(file, buffer, length, offset) //TODO
