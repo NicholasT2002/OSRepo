@@ -1,4 +1,4 @@
-#include "asciiMap.h"
+#include "mapDriver.h"
 
 /* Driver's Status is kept here */
 static driver_status_t status =
@@ -163,20 +163,60 @@ static ssize_t device_write(file, buffer, length, offset) //TODO
     return bytes_written;
 }
 
-static ssize_t device_lseek(file, buffer, length, offset) //TODO
+static ssize_t device_lseek(file, offset, whence) //TODO
 	struct file* file;
 	const char*  buffer;  /* The buffer */
 	size_t       length;  /* The length of the buffer */
 	loff_t*      offset;  /* Our offset in the file */
 {
+    loff_t temp;
 
+    switch(whence)
+    {
+        case SEEK_SET:
+            if((offset > DRV_BUF_SIZE)) || ()offset < 0))
+                return -1;
+            status->buf_ptr = offset; //filp->f_pos
+            break;
+        case SEEK_CUR:
+            temp = status->buf_ptr + offset;
+            if((temp > DRV_BUF_SIZE) || (temp < 0))
+                return -1;
+            status->buf_ptr = temp;
+            break;
+        case SEEK_END:
+            temp = DRV_BUF_SIZE + offset;
+            if((temp > DRV_BUD_SIZE) || (temp < 0))
+                return -1;
+            status->buf_ptr = temp;
+            break;
+        default:
+            return -1;
+    }
+
+    return status->buf_ptr;
 }
 
-static ssize_t device_ioctl(file, buffer, length, offset) //TODO
+static ssize_t device_ioctl(file, buffer, cmd, arg) //TODO
 	struct file* file;
 	const char*  buffer;  /* The buffer */
 	size_t       length;  /* The length of the buffer */
 	loff_t*      offset;  /* Our offset in the file */
 {
+    switch(cmd)
+    {
+        case 1:
+            buffer = {0};
+            break;
+        case 2:
+            buffer = {0};
+            status->length = 2551;
+            status->buf_ptr = NULL;
+            break;
+        case 3:
+            
+            break;
+    }
 
+    return 0;
 }

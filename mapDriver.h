@@ -9,7 +9,12 @@
                              * definitions are here
                              */
 
-#include <asm/uaccess.h>  /* for put/get_user */
+//#include <asm/uaccess.h>  /* for put/get_user */
+
+#include <linux/ioctl.h> //??? idk
+#define RESET_IOCTL _IOW(1, 1, int)
+#define ZERO_IOCTL _IOW(1, 2, int)
+#define CHECK_IOCTL _IOR(1, 3, int)
 
 /* Return codes */
 #define SUCCESS      0
@@ -68,8 +73,8 @@ static int device_open(struct inode*, struct file*);
 static int  device_release(struct inode*, struct file*);
 static ssize_t device_read(struct file*, char*, size_t, loff_t*);
 static ssize_t device_write(struct file*, const char*, size_t, loff_t*);
-static ssize_t device_lseek(struct file*, const char*, size_t, loff_t*);
-static ssize_t device_ioctl(struct file*, const char*, size_t, loff_t*);
+static ssize_t device_lseek(struct file*, loff_t*, int whence);
+static ssize_t device_ioctl(struct file*, const char*, uint, unisgned long);
 
 /* This structure will hold the functions to be
  * called when a process does something to the device
