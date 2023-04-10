@@ -74,7 +74,7 @@ static int  device_release(struct inode*, struct file*);
 static ssize_t device_read(struct file*, char*, size_t, loff_t*);
 static ssize_t device_write(struct file*, const char*, size_t, loff_t*);
 static ssize_t device_lseek(struct file*, loff_t*, int whence);
-static ssize_t device_ioctl(struct file*, const char*, uint, unisgned long);
+static ssize_t device_ioctl(struct file*, const char*, uint, unsigned long);
 
 /* This structure will hold the functions to be
  * called when a process does something to the device
@@ -88,7 +88,7 @@ struct file_operations Fops =
 	.read = device_read, /* read */
 	.write = device_write, /* write */
 	.release = device_release,  /* a.k.a. close */
-    .seek = device_lseek,   /* seek */
+    .llseek = device_lseek,   /* seek */
     .unlocked_ioctl = device_ioctl   /* ioctl */
 #if 0
 	.owner = NULL,   /* owner */

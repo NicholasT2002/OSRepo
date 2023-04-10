@@ -5,7 +5,7 @@ static driver_status_t status =
 {
 	'a',   /* Starting ASCII char is '0' */
 	false, /* Not busy at the beginning */
-    2551,
+    2500,
 	{0},   /* buffer */
 	NULL,  /* buffer's ptr */
 	-1,    /* major */
@@ -122,7 +122,7 @@ static ssize_t device_read(file, buffer, length, offset) //TODO
 {
 	ssize_t bytes_read = 0;
 
-	if(length > buf_length)
+	if(length > status.buf_length)
 	{
 		printk(STDERR, "Reading failed: Requested more bytes than in buffer!");
 		return 0;
@@ -130,7 +130,7 @@ static ssize_t device_read(file, buffer, length, offset) //TODO
 
 	for(int i = 0; i < length; ++i)
 	{
-		buffer[i] = buf[i];
+		buffer[i] = status.buf[i];
 		bytes_read++;
 	}
 
@@ -148,7 +148,7 @@ static ssize_t device_write(file, buffer, length, offset) //TODO
 {
 	ssize_t bytes_written = 0;
 
-    if (length > buf_length)
+    if (length > status.buf_length)
     {
         printk(STDERR, "Writing Failed: Too large to fit in map\n")
         return 0;
@@ -156,8 +156,8 @@ static ssize_t device_write(file, buffer, length, offset) //TODO
 
     for (int i = 0; i < length; i++)
     {
-        buf[i] = buffer[i];
-        buf_ptr = buf[i];
+        status.buf[i] = buffer[i];
+        status.buf_ptr = status.buf[i];
 		bytes_written++;
     }
     return bytes_written;
@@ -165,43 +165,42 @@ static ssize_t device_write(file, buffer, length, offset) //TODO
 
 static ssize_t device_lseek(file, offset, whence) //TODO
 	struct file* file;
-	const char*  buffer;  /* The buffer */
-	size_t       length;  /* The length of the buffer */
 	loff_t*      offset;  /* Our offset in the file */
+    int          whence;
 {
     loff_t temp;
 
     switch(whence)
     {
         case SEEK_SET:
-            if((offset > DRV_BUF_SIZE)) || ()offset < 0))
+            if((offset > DRV_BUF_SIZE) || (offset < 0))
                 return -1;
-            status->buf_ptr = offset; //filp->f_pos
+            status.buf_ptr = offset; //filp->f_pos
             break;
         case SEEK_CUR:
-            temp = status->buf_ptr + offset;
+            temp = status.buf_ptr + offset;
             if((temp > DRV_BUF_SIZE) || (temp < 0))
                 return -1;
-            status->buf_ptr = temp;
+            status.buf_ptr = temp;
             break;
         case SEEK_END:
             temp = DRV_BUF_SIZE + offset;
-            if((temp > DRV_BUD_SIZE) || (temp < 0))
+            if((temp > DRV_BUF_SIZE) || (temp < 0))
                 return -1;
-            status->buf_ptr = temp;
+            status.buf_ptr = temp;
             break;
         default:
             return -1;
-    }
+    };
 
-    return status->buf_ptr;
+    return status.buf_ptr;
 }
 
 static ssize_t device_ioctl(file, buffer, cmd, arg) //TODO
 	struct file* file;
 	const char*  buffer;  /* The buffer */
-	size_t       length;  /* The length of the buffer */
-	loff_t*      offset;  /* Our offset in the file */
+	uint         cmd;
+	unsigned long arg;
 {
     switch(cmd)
     {
@@ -210,13 +209,13 @@ static ssize_t device_ioctl(file, buffer, cmd, arg) //TODO
             break;
         case 2:
             buffer = {0};
-            status->length = 2551;
-            status->buf_ptr = NULL;
+            status.buf_length = 2500;
+            status.buf_ptr = NULL;
             break;
         case 3:
             
             break;
-    }
+    };
 
     return 0;
 }
