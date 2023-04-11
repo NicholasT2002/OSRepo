@@ -175,27 +175,25 @@ static loff_t device_lseek(file, offset, whence) //TODO
     switch(whence)
     {
         case SEEK_SET:
-            if((*offset > DRV_BUF_SIZE) || (offset < 0))
-                return -1;
-            status.buf_ptr = offset; //filp->f_pos
+			temp = *offset;
             break;
         case SEEK_CUR:
-            temp = status.buf_ptr + offset;
-            if((temp > DRV_BUF_SIZE) || (temp < 0))
-                return -1;
-            status.buf_ptr = temp;
+            temp = *(status.buf_ptr + *offset);
             break;
         case SEEK_END:
-            temp = DRV_BUF_SIZE + offset;
-            if((temp > DRV_BUF_SIZE) || (temp < 0))
-                return -1;
-            status.buf_ptr = temp;
+            temp = *(DRV_BUF_SIZE + offset);
             break;
         default:
-            return -1;
+            return -EINVAL;
     };
 
-    return 0;
+	if(temp > DRV_BUF_SIZE || temp < 0)
+	{
+		return -EINVAL;
+	}
+
+    status.buf_ptr = temp;
+    return temp;
 }
 
 static ssize_t device_ioctl(file, cmd, arg) //TODO
