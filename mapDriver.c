@@ -121,14 +121,15 @@ static ssize_t device_read(file, buffer, length, offset) //TODO
     loff_t*      offset;  /* Our offset in the file */
 {
 	ssize_t bytes_read = 0;
+	int i;
 
 	if(length > status.buf_length)
 	{
-		printk(STDERR, "Reading failed: Requested more bytes than in buffer!");
+		printk("Reading failed: Requested more bytes than in buffer!");
 		return 0;
 	}
 
-	for(int i = 0; i < length; ++i)
+	for(i = 0; i < length; ++i)
 	{
 		buffer[i] = status.buf[i];
 		bytes_read++;
@@ -147,23 +148,24 @@ static ssize_t device_write(file, buffer, length, offset) //TODO
 	loff_t*      offset;  /* Our offset in the file */
 {
 	ssize_t bytes_written = 0;
+	int i;
 
     if (length > status.buf_length)
     {
-        printk(STDERR, "Writing Failed: Too large to fit in map\n")
+        printk("Writing Failed: Too large to fit in map\n");
         return 0;
     }
 
-    for (int i = 0; i < length; i++)
+    for (i = 0; i < length; i++)
     {
         status.buf[i] = buffer[i];
-        status.buf_ptr = status.buf[i];
+        status.buf_ptr = &status.buf[i];
 		bytes_written++;
     }
     return bytes_written;
 }
 
-static ssize_t device_lseek(file, offset, whence) //TODO
+static loff_t device_lseek(file, offset, whence) //TODO
 	struct file* file;
 	loff_t*      offset;  /* Our offset in the file */
     int          whence;
@@ -173,7 +175,7 @@ static ssize_t device_lseek(file, offset, whence) //TODO
     switch(whence)
     {
         case SEEK_SET:
-            if((offset > DRV_BUF_SIZE) || (offset < 0))
+            if((*offset > DRV_BUF_SIZE) || (offset < 0))
                 return -1;
             status.buf_ptr = offset; //filp->f_pos
             break;
@@ -193,27 +195,26 @@ static ssize_t device_lseek(file, offset, whence) //TODO
             return -1;
     };
 
-    return status.buf_ptr;
+    return 0;
 }
 
-static ssize_t device_ioctl(file, buffer, cmd, arg) //TODO
+static ssize_t device_ioctl(file, cmd, arg) //TODO
 	struct file* file;
-	const char*  buffer;  /* The buffer */
 	uint         cmd;
 	unsigned long arg;
 {
     switch(cmd)
     {
         case 1:
-            buffer = {0};
+			memset(status.buf, 0, sizeof(status.buf));
             break;
+
         case 2:
-            buffer = {0};
+            memset(status.buf, 0, sizeof(status.buf));
             status.buf_length = 2500;
             status.buf_ptr = NULL;
             break;
-        case 3:
-            
+        case 3:            
             break;
     };
 
