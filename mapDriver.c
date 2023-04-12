@@ -218,3 +218,53 @@ static ssize_t device_ioctl(file, cmd, arg) //TODO
 
     return 0;
 }
+
+/* Initialize the module - Register the character device */
+int init_module(void)
+{
+	/* Register the character device (atleast try) */
+	status.major = register_chrdev
+	(
+		0,
+		DEVICE_NAME,
+		&Fops
+	);
+
+	/* Negative values signify an error */
+	if(status.major < 0)
+	{
+		printk
+		(
+			"Sorry, registering the ASCII device failed with %d\n",
+			status.major
+		);
+
+		return status.major;
+	}
+
+	printk
+	(
+		"Registeration is a success. The major device number is %d.\n",
+		status.major
+	);
+
+	printk
+	(
+		"If you want to talk to the device driver,\n" \
+		"you'll have to create a device file. \n" \
+		"We suggest you use:\n\n" \
+		"mknod %s c %d <minor>\n\n" \
+		"You can try different minor numbers and see what happens.\n",
+		DEVICE_NAME,
+		status.major
+	);
+
+	return SUCCESS;
+}
+
+
+/* Cleanup - unregister the appropriate file from /proc */
+void cleanup_module(void)
+{
+	unregister_chrdev(status.major, DEVICE_NAME);
+}

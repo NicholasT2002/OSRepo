@@ -28,7 +28,7 @@
 /* The name for our device, as it will appear
  * in /proc/devices
  */
-#define DEVICE_NAME  "/dev/asciimap"
+#define DEVICE_NAME  "/dev/mapDriver"
 
 /*
  * Driver status structure
@@ -98,3 +98,6 @@ struct file_operations Fops =
 	.flush = NULL,   /* flush */
 #endif
 };
+
+int init_module(void);
+void cleanup_module(void);

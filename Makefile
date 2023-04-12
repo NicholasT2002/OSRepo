@@ -19,7 +19,6 @@ all:
 	@echo ""
 	@echo "ASCII Character Device Driver and the Test Program have been built."
 	@echo "Type 'sudo make register' to register ASCII device module."
-	@echo "Then follow module's suggestion to mknod /dev/CSI230ASCII with the correct major number!"
 	@echo ""
 
 clean:
