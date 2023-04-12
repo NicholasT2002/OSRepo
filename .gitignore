@@ -1,3 +1,9 @@
-.mapDriver.o.d
+.mapDriver.*
+*.cmd
+*.ko
+*.o
+mapDriver.mod*
+modules.order
+Module.symvers
 .vscode/*
 nohup.out
