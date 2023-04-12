@@ -1,20 +1,8 @@
-####
-#
-# Makefile
-#
-# Main makefile to build: - ASCII character device driver
-#                         - main() to test the driver
-#
-# Serguei Mokhov
-#
-##
-
 CC=gcc
 DEBUG=-g -D_DEBUG
 DEFINE=-DMODULE -D__KERNEL__ -DLINUX
 WARNINGS=-Wall -Wmissing-prototypes -Wmissing-declarations
-#ISO=-ansi -pedantic
-CC_OPTIONS=-O1 $(WARNINGS) $(ISO) $(DEBUG) $(DEFINE)
+CC_OPTIONS=-O1 $(WARNINGS) $(DEBUG) $(DEFINE)
 
 # Where to look for header files
 INC=-I. -I/usr/include -I/usr/src/kernels/`uname -r`/include
@@ -30,10 +18,8 @@ all:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
 	@echo ""
 	@echo "ASCII Character Device Driver and the Test Program have been built."
-	@echo "Type 'make register' to register ASCII device module."
+	@echo "Type 'sudo make register' to register ASCII device module."
 	@echo "Then follow module's suggestion to mknod /dev/CSI230ASCII with the correct major number!"
-	@echo "EXTREME CAUTION IS HIGHLY RECOMMENDED. NOT TO USE ON YOUR OWN"
-	@echo "MACHINE OR NUCLEAR POWER PLANTS :) THERE MAY BE CONSEQUENCES"
 	@echo ""
 
 clean:
@@ -45,7 +31,7 @@ compile: $(EXE) $(OBJ)
 register: $(DRIVER)
 	insmod ./$(MODULE)
 	modinfo $(MODULE)
-	lsmod | grep ascii
+	lsmod | grep mapDriver
 	@echo ""
 	@echo "ASCII Character Device Driver has been built and registered."
 	@echo ""
@@ -61,7 +47,5 @@ $(DRIVER): types.h mapDriver.h mapDriver.c
 
 clean-all:
 	make clean
-	rmmod ascii
+	rmmod mapDriver
 	lsmod
-
-# EOF

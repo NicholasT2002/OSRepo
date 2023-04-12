@@ -92,7 +92,7 @@ static int device_open(inode, file)
 	return SUCCESS;
 }
 
-
+MODULE_LICENSE("GPL");
 /* This function is called when a process closes the
  * device file.
  */
