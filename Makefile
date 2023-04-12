@@ -14,7 +14,7 @@ OBJ=main.o $(DRIVER)
 
 obj-m += $(DRIVER)
 
-all:
+all: $(EXE)
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
 	@echo ""
 	@echo "ASCII Character Device Driver and the Test Program have been built."
