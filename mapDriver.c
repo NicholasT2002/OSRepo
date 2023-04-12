@@ -192,7 +192,7 @@ static loff_t device_lseek(file, offset, whence) //TODO
 		return -EINVAL;
 	}
 
-    status.buf_ptr = temp;
+    status.buf_ptr = (char*)temp;
     return temp;
 }
 

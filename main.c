@@ -7,9 +7,7 @@
 #include "common.h"
 
 int
-main(argc, argv)
-	int   argc;
-	char* argv[];
+main(argc, argv) int   argc; char* argv[];
 {
     
 
