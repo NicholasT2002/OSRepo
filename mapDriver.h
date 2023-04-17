@@ -11,10 +11,7 @@
 
 #include <asm/uaccess.h>  /* for put/get_user */
 
-#include <linux/ioctl.h> //??? idk
-#define RESET_IOCTL _IOW(1, 1, int)
-#define ZERO_IOCTL _IOW(1, 2, int)
-#define CHECK_IOCTL _IOR(1, 3, int)
+#include <common.h>
 
 /* Return codes */
 #define SUCCESS      0

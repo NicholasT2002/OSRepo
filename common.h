@@ -34,6 +34,13 @@
 #include <stdlib.h> /* exit() */
 #include <time.h>   /* time(), ctime() */
 
+#include <linux/ioctl.h> //??? idk
+#define RESET_IOCTL _IOW(1, 1, int)
+#define ZERO_IOCTL _IOW(1, 2, int)
+#define CHECK_IOCTL _IOR(1, 3, int)
+
+#define WIDTH = 50
+
 /* Debugging/error/logging functions */
 /* TODO: implement them */
 void print(char* format, ...);

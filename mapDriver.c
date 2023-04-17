@@ -1,5 +1,7 @@
 #include "mapDriver.h"
 
+char static_art[] = "ooo";
+
 /* Driver's Status is kept here */
 static driver_status_t status =
 {
@@ -208,11 +210,11 @@ static ssize_t device_ioctl(file, cmd, arg) //TODO
             break;
 
         case 2:
-            memset(status.buf, 0, sizeof(status.buf));
+            memcpy(status.buf, static_art, sizeof(static_art));
             status.buf_length = 2500;
             status.buf_ptr = NULL;
             break;
-        case 3:            
+        case 3:       
             break;
     };
 
