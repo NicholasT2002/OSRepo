@@ -50,7 +50,7 @@ main(argc, argv, envp)
                             }
                         }
                         //temp[WIDTH*WIDTH] = '\0';
-                        write(fd, temp, (WIDTH*WIDTH))
+                        write(fd, temp, (WIDTH*WIDTH));
                     }
 
                     /*
