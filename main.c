@@ -23,7 +23,7 @@ main(argc, argv, envp)
             }
             else { //Child
                 //Open file
-                if((fd = open(argv[1], O_RDWR)) >= 0) //no idea how to choose which argv[] from the child
+                if((fd = open(argv[1], O_RDWR)) >= 0)
 	            {
                     int height = 0;
 		            //For each line (repeat for allotted length)
@@ -74,8 +74,13 @@ main(argc, argv, envp)
     } else {
         //fork then,
         //execve
-        //pid_t pid = fork();
-        execve("/dev/genmap.sh", argv, envp);
+        pid_t pid = fork();
+        if (pid != 0) { //Parent
+            //Nothing goes here
+        }
+        else { //Child
+            execve("genmap.sh", argv, envp);
+        }
     }
     exit(0);
 }
