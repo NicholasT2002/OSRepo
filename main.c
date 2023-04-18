@@ -25,12 +25,38 @@ main(argc, argv, envp)
                 //Open file
                 if((fd = open(argv[1], O_RDWR)) >= 0)
 	            {
+                    char* buf;
+                    char* temp;
+                    //read number of bytes in the line (not counting spaces?) (read until /n)
+                    int bytes_read = read(fd, buf, (WIDTH*WIDTH));
+
+                    if (bytes_read == -1) {
+                        perror("read failed");
+                    }
+                    else {
+                        int current = 0;
+                        for(int i = 0; i < WIDTH; i++) {
+                            for (int j = 0; j < WIDTH; j++) {
+                            int slot = (i * WIDTH) + j;
+                                if(buf[current] != '\n') {
+                                    temp[slot] = buf[current];
+                                }
+                                else {
+                                    for (int k = 0; k < WIDTH - j; k++)
+                                        temp[slot + k] = '0';
+                                    j = WIDTH;
+                                }
+                                current++;
+                            }
+                        }
+                        //temp[WIDTH*WIDTH] = '\0';
+                        write(fd, temp, (WIDTH*WIDTH))
+                    }
+
+                    /*
                     int height = 0;
 		            //For each line (repeat for allotted length)
                     for (int i = 0; i < WIDTH; i++) {
-                        char* buf;
-                        char* temp;
-                        //read number of bytes in the line (not counting spaces?) (read until /n)
                         int bytes_read = read(fd, buf, WIDTH);
                         int bytes_written = 0;
                         //check if number of bytes is less or more than allotted width (including /n))
@@ -60,7 +86,7 @@ main(argc, argv, envp)
                             bytes_written = write(fd, temp, WIDTH);
                         }
                         height++;
-                    }
+                    }*/
 
 		            close(fd);
 	            }
