@@ -11,7 +11,7 @@
 
 #include <asm/uaccess.h>  /* for put/get_user */
 
-#include <common.h>
+#include "common.h"
 
 /* Return codes */
 #define SUCCESS      0

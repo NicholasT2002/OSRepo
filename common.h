@@ -30,7 +30,7 @@
 
 /* Debugging / Logging Macros */
 
-#include <stdio.h>
+//#include <stdio.h>
 #include <stdlib.h> /* exit() */
 #include <time.h>   /* time(), ctime() */
 
@@ -39,12 +39,12 @@
 #define ZERO_IOCTL _IOW(1, 2, int)
 #define CHECK_IOCTL _IOR(1, 3, int)
 
-#define WIDTH = 50
+#define WIDTH   50
 
 /* Debugging/error/logging functions */
 /* TODO: implement them */
 void print(char* format, ...);
-void log(int fd, char* format, ...);
+void _log(int fd, char* format, ...);
 void slog(FILE* stream, char* format, ...);
 void elog(int fd, char* format, ...);
 void perrexit(char* format, ...);
