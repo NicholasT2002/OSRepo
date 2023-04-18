@@ -46,5 +46,5 @@ $(DRIVER): types.h mapDriver.h mapDriver.c
 
 clean-all:
 	make clean
-	rmmod mapDriver
+	sudo rmmod mapDriver
 	lsmod
