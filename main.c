@@ -1,7 +1,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-//#include <stdio.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 #include "common.h"
@@ -25,13 +26,13 @@ main(argc, argv, envp)
                 //Open file
                 if((fd = open(argv[1], O_RDWR)) >= 0)
 	            {
-                    char* buf;
-                    char* temp;
+                    char* buf = malloc(WIDTH * WIDTH);
+                    char* temp = malloc(WIDTH * WIDTH);
                     //read number of bytes in the line (not counting spaces?) (read until \n)
                     int bytes_read = read(fd, buf, (WIDTH*WIDTH));
 
                     if (bytes_read == -1) {
-                        perror("read failed");
+                        perror("Read failed");
                     }
                     else {
                         int current = 0;
@@ -50,15 +51,19 @@ main(argc, argv, envp)
 
                                 if (j == WIDTH - 1) { //check if at end of line in file, moves to next line
                                     while (buf[current] != '\n')
-                                        current++;
+									{
+										current++;
+										printf("%s\n", &buf[current]);
+									}
                                     current++;
                                 }
                             }
                         }
                         //temp[WIDTH*WIDTH] = '\0';
+
                         write(fd, temp, (WIDTH*WIDTH));
                     }
-
+printf("%s\n", "Close");
 		            close(fd);
 	            }
 	            else
@@ -70,9 +75,10 @@ main(argc, argv, envp)
         }
 
         //Print the new buffer
-        char* toPrint;
+        char* toPrint = malloc(WIDTH * WIDTH);
         int bytes_read = read(fd, toPrint, (WIDTH*WIDTH));
-        printf(toPrint);
+        printf("%s\n", toPrint);
+
     } else {
         //fork then,
         //execve
@@ -86,5 +92,3 @@ main(argc, argv, envp)
     }
     exit(0);
 }
-
-/* EOF */

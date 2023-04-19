@@ -47,7 +47,7 @@ $(DRIVER): types.h mapDriver.h mapDriver.c
 clean-all:
 	make clean
 	sudo rmmod mapDriver
-	lsmod
+	sudo rm /dev/mapDriver
 
 test:
 	./$(EXE) testFile
