@@ -50,4 +50,4 @@ clean-all:
 	lsmod
 
 test:
-	./$(EXE)
+	./$(EXE) testFile
