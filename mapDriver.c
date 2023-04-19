@@ -51,6 +51,7 @@ char static_art[] =
 "-NT AL GF TW NT AL GF TW NT AL GF TW NT AL GF TW-\n"
 "-NT AL GF TW NT AL GF TW NT AL GF TW NT AL GF TW-\n"
 "-NT AL GF TW NT AL GF TW NT AL GF TW NT AL GF TW-\n"
+;
 
 /* Driver's Status is kept here */
 static driver_status_t status =

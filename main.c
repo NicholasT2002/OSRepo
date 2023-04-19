@@ -27,7 +27,7 @@ main(argc, argv, envp)
 	            {
                     char* buf;
                     char* temp;
-                    //read number of bytes in the line (not counting spaces?) (read until /n)
+                    //read number of bytes in the line (not counting spaces?) (read until \n)
                     int bytes_read = read(fd, buf, (WIDTH*WIDTH));
 
                     if (bytes_read == -1) {
@@ -59,7 +59,7 @@ main(argc, argv, envp)
                     for (int i = 0; i < WIDTH; i++) {
                         int bytes_read = read(fd, buf, WIDTH);
                         int bytes_written = 0;
-                        //check if number of bytes is less or more than allotted width (including /n))
+                        //check if number of bytes is less or more than allotted width (including \n))
                         if (bytes_read == 0) { //if bytes_read is 0 or /0 occurs just print # allotted width times for the rest of the allotted length
                             for (int i = 0; i < WIDTH; i++) {
                                 temp[i] = '0';
@@ -86,7 +86,8 @@ main(argc, argv, envp)
                             bytes_written = write(fd, temp, WIDTH);
                         }
                         height++;
-                    }*/
+                    }
+                    //*/
 
 		            close(fd);
 	            }

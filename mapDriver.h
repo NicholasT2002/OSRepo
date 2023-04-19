@@ -5,9 +5,7 @@
 #include <linux/module.h>   /* Specifically, a module */
 
 /* For character devices */
-#include <linux/fs.h>       /* The character device
-                             * definitions are here
-                             */
+#include <linux/fs.h>       /* The character device definitions are here */
 
 #include <asm/uaccess.h>  /* for put/get_user */
 
