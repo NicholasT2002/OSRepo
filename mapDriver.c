@@ -254,6 +254,8 @@ static ssize_t device_ioctl(file, cmd, arg) //TODO
 	uint         cmd;
 	unsigned long arg;
 {
+    char* temp;
+
     switch(cmd)
     {
         case 1:
@@ -265,7 +267,34 @@ static ssize_t device_ioctl(file, cmd, arg) //TODO
             status.buf_length = 2500;
             status.buf_ptr = NULL;
             break;
-        case 3:       
+        case 3:     
+            int width = 0;
+            int count = 0;
+            temp = status.buf;
+            while (*temp && *temp != '\n') {
+                width++;
+                temp++;
+            }
+            temp = status.buf;
+
+            while(*temp) {
+                count++;
+                if(*temp == '\n') {
+                    count--;
+                    if (count != width) {
+                        printk("Line is shorter than width");
+                        return -1;
+                    }
+                    else {
+                        count = 0;
+                    }
+                }
+                else if (*temp < 32) {
+                    printk("A character is outside of the writable ascii");
+                    return -1;
+                }
+                temp++;
+            }
             break;
     };
 

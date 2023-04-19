@@ -37,7 +37,7 @@ main(argc, argv, envp)
                         int current = 0;
                         for(int i = 0; i < WIDTH; i++) {
                             for (int j = 0; j < WIDTH; j++) {
-                            int slot = (i * WIDTH) + j;
+                                int slot = (i * WIDTH) + j;
                                 if(buf[current] != '\n') {
                                     temp[slot] = buf[current];
                                 }
@@ -47,47 +47,17 @@ main(argc, argv, envp)
                                     j = WIDTH;
                                 }
                                 current++;
+
+                                if (j == WIDTH - 1) { //check if at end of line in file, moves to next line
+                                    while (buf[current] != '\n')
+                                        current++;
+                                    current++;
+                                }
                             }
                         }
                         //temp[WIDTH*WIDTH] = '\0';
                         write(fd, temp, (WIDTH*WIDTH));
                     }
-
-                    /*
-                    int height = 0;
-		            //For each line (repeat for allotted length)
-                    for (int i = 0; i < WIDTH; i++) {
-                        int bytes_read = read(fd, buf, WIDTH);
-                        int bytes_written = 0;
-                        //check if number of bytes is less or more than allotted width (including \n))
-                        if (bytes_read == 0) { //if bytes_read is 0 or /0 occurs just print # allotted width times for the rest of the allotted length
-                            for (int i = 0; i < WIDTH; i++) {
-                                temp[i] = '0';
-                            }
-                            temp[WIDTH] = '\n';
-                            bytes_written = write(fd, temp, WIDTH);
-                        }
-                        else if (bytes_read == -1) {
-                            perror("read failed");
-                        }
-                        else if (bytes_read < WIDTH) { //if less, just print line and then add # missing number of bytes
-                            for (int i = 0; i < bytes_read; i++) {
-                                temp[i] = buf[i];
-                            }
-                            for (int i = bytes_read; i < WIDTH; i++) {
-                                temp[i] = '0';
-                            }
-                        }
-                        else { //if more, print only up to allotted width
-                            for (int i = 0; i < bytes_read - 1; i++) {
-                                temp[i] = buf[i];
-                            }
-                            temp[WIDTH] = '\n';
-                            bytes_written = write(fd, temp, WIDTH);
-                        }
-                        height++;
-                    }
-                    //*/
 
 		            close(fd);
 	            }
@@ -98,6 +68,11 @@ main(argc, argv, envp)
 	            }
             }
         }
+
+        //Print the new buffer
+        char* toPrint;
+        int bytes_read = read(fd, toPrint, (WIDTH*WIDTH));
+        printf(toPrint);
     } else {
         //fork then,
         //execve

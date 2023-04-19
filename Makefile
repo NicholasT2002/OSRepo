@@ -48,3 +48,6 @@ clean-all:
 	make clean
 	sudo rmmod mapDriver
 	lsmod
+
+test:
+	./$(EXE)
