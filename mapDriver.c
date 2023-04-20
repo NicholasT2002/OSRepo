@@ -184,7 +184,7 @@ static ssize_t device_read(file, buffer, length, offset) //TODO
 
 	for(i = 0; i < length; ++i)
 	{
-		put_user(&status.buf[i], buffer[i]);
+		put_user(status.buf[i], &buffer[i]);
 		bytes_read++;
 	}
 
@@ -211,7 +211,7 @@ static ssize_t device_write(file, buffer, length, offset) //TODO
 
     for (i = 0; i < length; i++)
     {
-		get_user(&status.buf[i], buffer[i]);
+		get_user(status.buf[i], &buffer[i]);
         status.buf_ptr = &status.buf[i];
 		bytes_written++;
     }

@@ -23,10 +23,6 @@
 #define TIMEOUT_RETRIES   3
 #define TIMEOUT           30
 
-/* min() and max() macros */
-#define	min(a, b)         (a < b ? a : b)
-#define	max(a, b)         (a > b ? a : b)
-
 
 /* Debugging / Logging Macros */
 

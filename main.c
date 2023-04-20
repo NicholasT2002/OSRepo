@@ -61,7 +61,7 @@ main(argc, argv, envp)
                         }
                         //temp[WIDTH*WIDTH] = '\0';
 
-                        write(fd, temp, (WIDTH*WIDTH));
+                        int bytes_written = write(fd, temp, (WIDTH*WIDTH));
                     }
 printf("%s\n", "Close");
 		            close(fd);
