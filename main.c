@@ -45,6 +45,7 @@ main(argc, argv, envp)
                                 else {
                                     for (int k = 0; k < WIDTH - j; k++)
                                         temp[slot + k] = '0';
+                                    //temp[slot + WIDTH - j] = '\n';
                                     j = WIDTH;
                                 }
                                 current++;
@@ -59,7 +60,7 @@ main(argc, argv, envp)
                                 }
                             }
                         }
-                        //temp[WIDTH*WIDTH] = '\0';
+                        temp[WIDTH*WIDTH] = '\0';
 
                         int bytes_written = write(fd, temp, (WIDTH*WIDTH));
                     }
@@ -88,6 +89,10 @@ printf("%s\n", "Close");
         }
         else { //Child
             execve("genmap.sh", argv, envp);
+            //char* toPrint = malloc(WIDTH * WIDTH);
+            //size_t bytes_read = read(fd, toPrint, (WIDTH*WIDTH));
+            //toPrint[bytes_read] = '\0';
+            //printf("%s\n", toPrint);
         }
     }
     exit(0);
