@@ -17,8 +17,8 @@ obj-m += $(DRIVER)
 all: $(EXE)
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
 	@echo ""
-	@echo "ASCII Character Device Driver and the Test Program have been built."
-	@echo "Type 'sudo make register' to register ASCII device module."
+	@echo "mapDriver Character Device Driver and the Test Program have been built."
+	@echo "Type 'sudo make register' to register mapDriver device module."
 	@echo ""
 
 clean:

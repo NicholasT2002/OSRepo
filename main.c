@@ -8,18 +8,13 @@
 
 #include "common.h"
 
-void sigchld_handler(int signal)
-{
-    // Do nothing, just handle the signal
-}
-
 int main(argc, argv, envp)
 int argc;
 char *argv[];
 char *envp[];
 {
     // Add the signal handler for SIGCHLD
-    signal(SIGCHLD, sigchld_handler);
+    signal(SIGCHLD, SIG_IGN);
 
     int fd;
 
@@ -28,13 +23,15 @@ char *envp[];
         for (int i = 1; i < argc; i++)
         {
             pid_t pid = fork();
-
+            printf("pid: %d\n", (int)pid);
             if (pid != 0)
             { // Parent
                 // Nothing goes here
+                wait(pid);
             }
-            else
+            if (pid == 0)
             { // Child
+                printf("Child begins\n");
                 // Open file
                 if ((fd = open(argv[i], O_RDWR)) >= 0)
                 {
@@ -42,7 +39,9 @@ char *envp[];
                     char *temp = malloc(WIDTH * WIDTH);
                     // read number of bytes in the line (not counting spaces?) (read until \n)
                     int bytes_read = read(fd, buf, (WIDTH * WIDTH));
-
+                    printf("test");
+                    printf("Bytes Read: %d\n", bytes_read);
+                    printf("test2");
                     if (bytes_read == -1)
                     {
                         perror("Read failed");
@@ -73,31 +72,40 @@ char *envp[];
                                     while (buf[current] != '\n')
                                     {
                                         current++;
-                                        printf("%s\n", &buf[current]);
+                                        //printf("%s\n", &buf[current]);
+                                        //printf("Why does this one specifically work?\n");
                                     }
                                     current++;
                                 }
                             }
                         }
                         temp[WIDTH * WIDTH] = '\0';
-
+                        fd = open("/dev/mapDriver", O_RDWR);
+                        if (fd == -1) {
+                            perror("Error");
+                            exit(0);        
+                        }
                         int bytes_written = write(fd, temp, (WIDTH * WIDTH));
+                        printf("Bytes Written: %d\n", bytes_written);
+                        if (bytes_written == -1)
+                            perror("Write not right");
                     }
                     printf("%s\n", "Close");
+                    //close(fd);
+                    // Print the new buffer
+                    char *toPrint = malloc(WIDTH * WIDTH);
+                    bytes_read = read(fd, toPrint, (WIDTH * WIDTH));
+                    printf("Bytes Read: %d\n", bytes_read);
+                    printf("%s\n", toPrint);
                     close(fd);
                 }
                 else
                 {
-                    perror("open(/dev/CSI230ASCII) failed");
+                    perror("open(/dev/mapDriver) failed");
                     exit(1);
                 }
             }
         }
-
-        // Print the new buffer
-        char *toPrint = malloc(WIDTH * WIDTH);
-        int bytes_read = read(fd, toPrint, (WIDTH * WIDTH));
-        printf("%s\n", toPrint);
     }
     else
     {
@@ -107,14 +115,11 @@ char *envp[];
         if (pid != 0)
         { // Parent
             // Nothing goes here
+            wait(pid);
         }
         else
         { // Child
             execve("genmap.sh", argv, envp);
-            // char* toPrint = malloc(WIDTH * WIDTH);
-            // size_t bytes_read = read(fd, toPrint, (WIDTH*WIDTH));
-            // toPrint[bytes_read] = '\0';
-            // printf("%s\n", toPrint);
         }
     }
     exit(0);

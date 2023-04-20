@@ -50,7 +50,7 @@ char static_art[] =
 	"-NT AL GF TW NT AL GF TW NT AL GF TW NT AL GF TW-\n"
 	"-NT AL GF TW NT AL GF TW NT AL GF TW NT AL GF TW-\n"
 	"-NT AL GF TW NT AL GF TW NT AL GF TW NT AL GF TW-\n"
-	"-NT AL GF TW NT AL GF TW NT AL GF TW NT AL GF TW-\n";
+	"-NT AL GF TW NT AL GF TW NT AL GF TW NT AL GF TW\n";
 
 /* Driver's Status is kept here */
 static driver_status_t status =
@@ -123,9 +123,8 @@ struct file *file;
 	/* Initialize the message. */
 	sprintf(
 		status.buf,
-		"If I told you once, I told you %d times - %s",
-		counter++,
-		"Hello, world\n");
+		"%s\n",
+        static_art);
 
 	/* The only reason we're allowed to do this sprintf
 	 * is because the maximum length of the message
