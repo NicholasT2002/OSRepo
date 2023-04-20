@@ -36,7 +36,7 @@ char *envp[];
             else
             { // Child
                 // Open file
-                if ((fd = open(argv[1], O_RDWR)) >= 0)
+                if ((fd = open(argv[i], O_RDWR)) >= 0)
                 {
                     char *buf = malloc(WIDTH * WIDTH);
                     char *temp = malloc(WIDTH * WIDTH);
