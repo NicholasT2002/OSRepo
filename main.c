@@ -4,14 +4,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <signal.h>
 
 #include "common.h"
+
+void sigchld_handler(int signal)
+{
+    // Do nothing, just handle the signal
+}
 
 int main(argc, argv, envp)
 int argc;
 char *argv[];
 char *envp[];
 {
+    // Add the signal handler for SIGCHLD
+    signal(SIGCHLD, sigchld_handler);
+
     int fd;
 
     if (argc > 1)
