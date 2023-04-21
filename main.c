@@ -102,7 +102,7 @@ char *envp[];
                 }
                 else
                 {
-                    perror("open(/dev/mapDriver) failed");
+                    perror("open(\"/dev/mapDriver\") failed");
                     exit(1);
                 }
             }
