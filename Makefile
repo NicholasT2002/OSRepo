@@ -31,6 +31,7 @@ register: $(DRIVER)
 	insmod ./$(MODULE)
 	modinfo $(MODULE)
 	lsmod | grep mapDriver
+	sudo chmod 666 /dev/mapDriver
 	@echo ""
 	@echo "ASCII Character Device Driver has been built and registered."
 	@echo ""
