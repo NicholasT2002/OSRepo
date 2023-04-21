@@ -51,4 +51,4 @@ clean-all:
 	sudo rm /dev/mapDriver
 
 test:
-	./$(EXE) testFile
+	./$(EXE) testFile.txt
