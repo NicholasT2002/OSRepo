@@ -80,6 +80,7 @@ char *envp[];
                             }
                         }
                         temp[WIDTH * WIDTH] = '\0';
+                        close(fd);
                         fd = open("/dev/mapDriver", O_RDWR);
                         if (fd == -1) {
                             perror("Error");
