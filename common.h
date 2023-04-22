@@ -36,6 +36,10 @@
 #define CHECK_IOCTL _IOR(1, 3, int)
 
 #define WIDTH   50
+#define HEIGHT  50
+
+#define DEFAULT_PORT 23032
+#define DEFAULT_IP "127.0.0.1"
 
 /* Debugging/error/logging functions */
 /* TODO: implement them */
