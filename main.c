@@ -46,11 +46,11 @@ char *envp[];
                         perror("Read failed\n");
                     }
                     else
-                    {	
+                    {
                         int current = 0;
                         for (int i = 0; i < WIDTH; i++)
                         {
-printf("%d\n", i);
+                            printf("%d\n", i);
                             for (int j = 0; j < WIDTH; j++)
                             {
                                 int slot = (i * WIDTH) + j;
@@ -61,17 +61,17 @@ printf("%d\n", i);
                                 else
                                 {
                                     for (int k = 0; k < WIDTH - j; k++)
-									{
-										temp[slot + k] = '0';
-									}
+                                    {
+                                        temp[slot + k] = '0';
+                                    }
 
                                     j = WIDTH;
                                 }
                                 current++;
 
                                 if (j == WIDTH - 1)
-                                { 
-									// check if at end of line in file, moves to next line
+                                {
+                                    // check if at end of line in file, moves to next line
                                     while (buf[current] != '\n')
                                     {
                                         current++;
@@ -79,16 +79,16 @@ printf("%d\n", i);
                                     current++;
                                 }
                             }
-printf("%d\n", i);
+                            printf("%d\n", i);
                         }
 
                         temp[WIDTH * WIDTH] = '\0';
                         close(fd);
                         fd = open("/dev/mapDriver", O_RDWR);
-                        if (fd == -1) 
-						{
+                        if (fd == -1)
+                        {
                             perror("Error\n");
-                            exit(0);        
+                            exit(0);
                         }
                         int bytes_written = write(fd, temp, (WIDTH * WIDTH));
                         printf("Bytes Written: %d\n", bytes_written);
@@ -96,8 +96,8 @@ printf("%d\n", i);
                             perror("Write not right\n");
                     }
                     printf("%s\n", "Close");
-                    //close(fd);
-                    // Print the new buffer
+                    // close(fd);
+                    //  Print the new buffer
                     char *toPrint = malloc(WIDTH * WIDTH);
                     bytes_read = read(fd, toPrint, (WIDTH * WIDTH));
                     printf("Bytes Read: %d\n", bytes_read);
