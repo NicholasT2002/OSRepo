@@ -8,3 +8,4 @@ Module.symvers
 .vscode/*
 nohup.out
 mapDriver-test
+mapServer.h.gch
