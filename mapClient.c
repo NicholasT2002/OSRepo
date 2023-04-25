@@ -51,7 +51,7 @@ char *argv[];
     }
 
     //Receive Messages
-    char* server_reply = malloc(3000);
+    char* server_reply[3000];
     if (recv(sock_fd, server_reply, 3000, 0) < 0)
         perror("Client Receving failed\n");
     printf(server_reply);
