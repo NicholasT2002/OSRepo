@@ -17,6 +17,8 @@
 
 int main(int argc, char * argv[])
 {
+	const int MSG_SIZE = 3000;
+
     int listenSocket, clientSocket, c;
     char* ip = DEFAULT_IP;
     struct sockaddr_in server, client;
@@ -68,12 +70,12 @@ int main(int argc, char * argv[])
 
         else
         { // Child
-            char* client_message = malloc(3000);
-            char* server_reply = malloc(3000);
+            char* client_message = malloc(MSG_SIZE);
+            char* server_reply = malloc(MSG_SIZE);
             char* err_msg = "Server failed to read client message";
 
 			// Try to get message, send error if we don't
-            if (recv(clientSocket, client_message, 3000, 0) < 0) 
+            if (recv(clientSocket, client_message, MSG_SIZE, 0) < 0) 
 			{
                 server_reply[0] = 'E';
                 server_reply[1] = (char)sizeof(err_msg);

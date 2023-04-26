@@ -9,3 +9,5 @@ Module.symvers
 nohup.out
 mapDriver-test
 mapServer.h.gch
+mapServer
+mapClient
