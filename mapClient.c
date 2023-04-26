@@ -15,6 +15,12 @@
 #include "common.h"
 #include "mapClient.h"
 
+struct msg_t
+{
+	char c;
+	int width, height;
+};
+
 int main(int argc, char* argv[])
 {
     int sock_fd;
@@ -31,7 +37,6 @@ int main(int argc, char* argv[])
 	{
 		perror("Client Socket could not be created");
 	}
-        
 
     //Connect to server
     server.sin_addr.s_addr = inet_addr(ip);
@@ -44,29 +49,54 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    //Send Messages
-    char* message = malloc(sizeof(char)+sizeof(int));
-    //char* mMessage = malloc(sizeof(char)+sizeof(int)*2); //For if Specifying width/height
+	// Create message
+	struct msg_t* message = malloc(sizeof(struct msg_t));
+	message->c = 'M';
+	message->width = 0;
+	//message->height = 10;
 
-    message = 'M' + (char*)0;
-    if (send(sock_fd, message, sizeof(message), 0) < 0) 
+	// Send message
+    if (send(sock_fd, (char*)message, sizeof(struct msg_t), 0) < 0) 
 	{
         perror("Client Sending failed");
         return 1;
     }
 
     //Receive Messages
-    char* server_reply[3000];
+	const int REPLY_SIZE = 3000;
+	ssize_t bytesReceived;
+    char server_reply[REPLY_SIZE];
+	memset(server_reply, 0, sizeof(server_reply));
 
-    if (recv(sock_fd, server_reply, 3000, 0) < 0)
+    while((bytesReceived = recv(sock_fd, server_reply, REPLY_SIZE, 0)) < 0)
 	{
-		perror("Client receiving failed");
+		if(errno == -1)
+		{
+			perror("Client receiving failed");
+			return 1;
+		}
 	}
 
-    printf("%s\n", *server_reply);
+	if(server_reply[0] == 'M')
+	{
+		struct smsg_t* reply = malloc(sizeof(struct smsg_t));
+		memcpy(reply, server_reply, bytesReceived);
+
+		printf("%c %d %d\n%s\n", reply->c, reply->width, reply->height, reply->message);
+	}
+
+	else if (server_reply[0] == 'E')
+	{
+		
+	}
+
+	else
+	{
+
+	}
 
     //Close Socket
     close(sock_fd);
 
-    exit(0);
+    return 0;
 }

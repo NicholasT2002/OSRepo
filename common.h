@@ -41,6 +41,13 @@
 #define DEFAULT_PORT 23032
 #define DEFAULT_IP "127.0.0.1"
 
+struct smsg_t
+{
+	char c;
+	int width, height;
+	char message[3000];
+};
+
 /* Debugging/error/logging functions */
 /* TODO: implement them */
 void print(char* format, ...);
