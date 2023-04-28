@@ -32,6 +32,14 @@ int main(int argc, char* argv[])
 		ip = argv[1];
 	}
 
+    FILE* logFile = fopen("mapClient.log", "a");
+
+    if(errno == -1)
+	{
+		perror("Could not open logFile for Client");
+		return 1;
+	}
+
     //Create socket
     if ((sock_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 	{
@@ -61,6 +69,11 @@ int main(int argc, char* argv[])
         perror("Client Sending failed");
         return 1;
     }
+    else 
+    {
+        fprintf(logFile, "Sent Message to Server: ");
+        fprintf(logFile, "%c %d %d\n", message->c, message->width, message->height);
+    }
 
     //Receive Messages
 	const int REPLY_SIZE = 3000;
@@ -83,6 +96,9 @@ int main(int argc, char* argv[])
 		memcpy(reply, server_reply, bytesReceived);
 
 		printf("%c %d %d\n%s\n", reply->c, reply->width, reply->height, reply->message);
+
+        fprintf(logFile, "Received Message from Server: ");
+        fprintf(logFile, "%c %d %d\n%s\n", reply->c, reply->width, reply->height, reply->message);
 	}
 
 	else if (server_reply[0] == 'E')
@@ -97,6 +113,7 @@ int main(int argc, char* argv[])
 
     //Close Socket
     close(sock_fd);
+    fclose(logFile);
 
     return 0;
 }

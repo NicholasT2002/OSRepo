@@ -28,6 +28,14 @@ int main(int argc, char * argv[])
 		ip = argv[1];
 	}
 
+    FILE* logFile = fopen("mapServer.log", "a");
+
+    if(errno == -1)
+	{
+		perror("Could not open logFile for Client");
+		return 1;
+	}
+
     // Create socket
     if ((listenSocket = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 	{
@@ -120,6 +128,9 @@ int main(int argc, char * argv[])
 
 				int requestedWidth, requestedHeight;
 
+                fprintf(logFile, "Received Message from Client: ");
+                fprintf(logFile, "%c %d %d\n", client_message[0], client_message[1], client_message[2]);
+
 				// If client gave no parameters, send default-sized map
                 if (client_message[1] == 0) 
 				{
@@ -170,12 +181,16 @@ int main(int argc, char * argv[])
 					close(fd);
                     exit(-1);
                 }
+                
+                fprintf(logFile, "Sent Message to Client: ");
+                fprintf(logFile, "%c %d %d\n%s\n", msg->c, msg->width, msg->height, msg->message);
 
                 close(fd);
 				exit(0);
             }
         }
     }
+    fclose(logFile);
 
     return 0;
 }
