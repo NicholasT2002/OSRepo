@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
 	struct msg_t* message = malloc(sizeof(struct msg_t));
 	message->c = 'M';
 	message->width = 0;
-	//message->height = 10;
+	message->height = 10;
 
 	// Send message
     if (send(sock_fd, (char*)message, sizeof(struct msg_t), 0) < 0) 
@@ -95,10 +95,10 @@ int main(int argc, char* argv[])
 		struct smsg_t* reply = malloc(sizeof(struct smsg_t));
 		memcpy(reply, server_reply, bytesReceived);
 
-		printf("%c %d %d\n%s\n", reply->c, reply->width, reply->height, reply->message);
+		printf("%c %d %d\n%s", reply->c, reply->width, reply->height, reply->message);
 
         fprintf(logFile, "Received Message from Server: ");
-        fprintf(logFile, "%c %d %d\n%s\n", reply->c, reply->width, reply->height, reply->message);
+        fprintf(logFile, "%c %d %d\n%s", reply->c, reply->width, reply->height, reply->message);
 	}
 
 	else if (server_reply[0] == 'E')

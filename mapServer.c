@@ -17,7 +17,7 @@
 
 int main(int argc, char * argv[])
 {
-	const int MSG_SIZE = 3000;
+	const int MSG_SIZE = 3000, PARAM_INDEX_1 = 4, PARAM_INDEX_2 = 8;
 
     int listenSocket, clientSocket, c;
     char* ip = DEFAULT_IP;
@@ -129,10 +129,12 @@ int main(int argc, char * argv[])
 				int requestedWidth, requestedHeight;
 
                 fprintf(logFile, "Received Message from Client: ");
-                fprintf(logFile, "%c %d %d\n", client_message[0], client_message[1], client_message[2]);
+                fprintf(logFile, "%c %d %d\n", client_message[0], client_message[PARAM_INDEX_1], client_message[PARAM_INDEX_2]);
+
+				msg->c = 'M';
 
 				// If client gave no parameters, send default-sized map
-                if (client_message[1] == 0) 
+                if (client_message[PARAM_INDEX_1] == 0) 
 				{
 					msg->width = WIDTH;
 					msg->height = HEIGHT;
@@ -141,13 +143,11 @@ int main(int argc, char * argv[])
 				// Send map of size that client wants
                 else 
 				{
-                    msg->width = client_message[1];
-                    msg->height = client_message[2];
+                    msg->width = client_message[PARAM_INDEX_1];
+                    msg->height = client_message[PARAM_INDEX_2];
                 }
-				msg->c = 'M';
-                //server_reply[0] = 'M';
-                //server_reply[1] = requestedWidth;
-                //server_reply[2] = requestedHeight;
+
+				printf("%d %d\n", msg->width, msg->height);
 
                 char *buf = malloc(msg->width * msg->height);
 
@@ -175,7 +175,7 @@ int main(int argc, char * argv[])
 
 				msg->message[bytes_read] = '\0';
 
-                if (send(clientSocket, (char*)msg, bytes_read + sizeof(char) + (2 * sizeof(int)), 0) < 0) 
+                if (send(clientSocket, (char*)msg, sizeof(struct smsg_t), 0) < 0) 
 				{
                     perror("Server Sending failed");
 					close(fd);
@@ -183,7 +183,7 @@ int main(int argc, char * argv[])
                 }
                 
                 fprintf(logFile, "Sent Message to Client: ");
-                fprintf(logFile, "%c %d %d\n%s\n", msg->c, msg->width, msg->height, msg->message);
+                fprintf(logFile, "%c %d %d\n%s", msg->c, msg->width, msg->height, msg->message);
 
                 close(fd);
 				exit(0);
