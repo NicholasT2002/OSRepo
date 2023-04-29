@@ -68,64 +68,67 @@ int main(int argc, char * argv[])
 			continue;
 		}
 
-        printf("Received Message\n");
         pid_t pid = fork();
 
-        if (pid != 0)
-        { // Parent
-            wait(pid);
-        }
+		// Wait if parent
+        if (pid != 0) { wait(pid); }
 
         else
-        { // Child
-            char* client_message = malloc(MSG_SIZE);
-            char* server_reply = malloc(MSG_SIZE);
-            char* err_msg = "Server failed to read client message";
+        {
+            char* client_message = malloc(MSG_SIZE), *server_reply = malloc(MSG_SIZE);
+			struct smsg_t* msg = malloc(sizeof(struct smsg_t));
 
 			// Try to get message, send error if we don't
-            if (recv(clientSocket, client_message, MSG_SIZE, 0) < 0) 
+            if (recv(clientSocket, client_message, MSG_SIZE, 0) < 0)
 			{
-                server_reply[0] = 'E';
-                server_reply[1] = (char)sizeof(err_msg);
+				perror("Server Receiving failed");
 
-                for (int i = 2; i < sizeof(err_msg) + 3; i++)
+				char* err_msg = "Failed to receive client message";
+
+				msg->c = 'E';
+				msg->width = strlen(err_msg) + 1;				
+
+                for (int i = 0; i < strlen(err_msg); i++)
 				{
-					server_reply[i] = err_msg[i];
+					msg->message[i] = err_msg[i];
 				}
+
+				msg->message[strlen(err_msg)] = '\0';
                     
-                if (send(clientSocket, server_reply, sizeof(server_reply), 0) < 0) 
+                if (send(clientSocket, (char*)msg, sizeof(struct smsg_t), 0) < 0) 
 				{
                     perror("Server Sending failed");
-                    exit(-1);
                 }
 
-                perror("Server Receving failed");
+				exit(-1);
             }
 
 			// Send error if message is of incorrect format
             else if (client_message[0] != 'M') 
 			{
-                server_reply[0] = 'E';
-                server_reply[1] = (char)sizeof(err_msg);
+				char* err_msg = "Message is in incorrect format";
 
-                for (int i = 2; i < sizeof(err_msg) + 3; i++)
+				msg->c = 'E';
+				msg->width = strlen(err_msg) + 1;				
+
+                for (int i = 0; i < strlen(err_msg); i++)
 				{
-					server_reply[i] = err_msg[i];
+					msg->message[i] = err_msg[i];
 				}
 
-                if (send(clientSocket, server_reply, sizeof(server_reply), 0) < 0) 
+				msg->message[strlen(err_msg)] = '\0';
+                    
+                if (send(clientSocket, (char*)msg, sizeof(struct smsg_t), 0) < 0) 
 				{
                     perror("Server Sending failed");
-                    exit(-1);
                 }
 
-                perror("Server Received non-M message");
+                printf("Server received message in incorrect format\n");
+				exit(-1);
             }
 
             else 
 			{
-				struct smsg_t* msg = malloc(sizeof(struct smsg_t));
-
 				int requestedWidth, requestedHeight;
 
                 fprintf(logFile, "Received Message from Client: ");
@@ -190,6 +193,7 @@ int main(int argc, char * argv[])
             }
         }
     }
+
     fclose(logFile);
 
     return 0;

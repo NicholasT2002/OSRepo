@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
 
 	// Create message
 	struct msg_t* message = malloc(sizeof(struct msg_t));
-	message->c = 'M';
+	message->c = 'f';
 	message->width = 0;
 	message->height = 10;
 
@@ -90,28 +90,35 @@ int main(int argc, char* argv[])
 		}
 	}
 
+	// Copy message from server
+	struct smsg_t* reply = malloc(sizeof(struct smsg_t));
+	memcpy(reply, server_reply, bytesReceived);
+
 	if(server_reply[0] == 'M')
 	{
-		struct smsg_t* reply = malloc(sizeof(struct smsg_t));
-		memcpy(reply, server_reply, bytesReceived);
-
-		printf("%c %d %d\n%s", reply->c, reply->width, reply->height, reply->message);
+		printf("%c %d %d %s", reply->c, reply->width, reply->height, reply->message);
 
         fprintf(logFile, "Received Message from Server: ");
-        fprintf(logFile, "%c %d %d\n%s", reply->c, reply->width, reply->height, reply->message);
+        fprintf(logFile, "%c %d %d %s", reply->c, reply->width, reply->height, reply->message);
 	}
 
 	else if (server_reply[0] == 'E')
 	{
-		
+		printf("%c %d\n%s\n", reply->c, reply->width, reply->message);
+
+        fprintf(logFile, "Received error from Server: ");
+        fprintf(logFile, "%c %d\n%s\n", reply->c, reply->width, reply->message);
 	}
 
 	else
 	{
+		printf("Received message from server in incorrect format:\n%c %d %d\n%s", reply->c, reply->width, reply->height, reply->message);
 
+        fprintf(logFile, "Received message from server in incorrect format:\n");
+        fprintf(logFile, "%c %d %d\n%s", reply->c, reply->width, reply->height, reply->message);
 	}
 
-    //Close Socket
+    // Close Socket and file
     close(sock_fd);
     fclose(logFile);
 
