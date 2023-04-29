@@ -12,6 +12,11 @@ MODULE=mapDriver.ko
 EXE=mapDriver-test
 OBJ=main.o $(DRIVER)
 
+SERVER=mapServer.c
+CLIENT=mapClient.c
+SERV_EXE=server
+CLNT_EXE=client
+
 obj-m += $(DRIVER)
 
 all: $(EXE)
@@ -53,3 +58,20 @@ clean-all:
 
 test:
 	./$(EXE) testFile
+
+createSocket:
+	$(CC) -g -Wall $(SERVER) -o $(SERV_EXE)
+	$(CC) -g -Wall $(CLIENT) -o $(CLNT_EXE)
+
+runSocketTest:
+	./$(SERV_EXE) &
+	sudo netstat -plnt | grep server
+	for number in 1 2 3 4 5 6 7 8 9 10; do \
+	./$(CLNT_EXE) ; \
+	done
+
+cleanSocket:
+	pidof $(SERV_EXE) | xargs kill
+	rm $(SERV_EXE)
+	rm $(CLNT_EXE)
+	sudo netstat -plnt | grep server

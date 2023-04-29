@@ -59,9 +59,9 @@ int main(int argc, char* argv[])
 
 	// Create message
 	struct msg_t* message = malloc(sizeof(struct msg_t));
-	message->c = 'f';
+	message->c = 'M';
 	message->width = 0;
-	message->height = 10;
+	message->height = 0;
 
 	// Send message
     if (send(sock_fd, (char*)message, sizeof(struct msg_t), 0) < 0) 
