@@ -5,127 +5,142 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <signal.h>
-
+#include <stdbool.h>
 #include "common.h"
 
-int main(argc, argv, envp)
-int argc;
-char *argv[];
-char *envp[];
+int main(int argc, char* argv[], char* envp[])
 {
-    // Add the signal handler for SIGCHLD
+    // Add SIGCHLD Handler
     signal(SIGCHLD, SIG_IGN);
 
     int fd;
 
+	// If we got a file, turn it into map
     if (argc > 1)
     {
         for (int i = 1; i < argc; i++)
         {
             pid_t pid = fork();
-            printf("pid: %d\n", (int)pid);
-            if (pid != 0)
-            { // Parent
-                // Nothing goes here
-                wait(pid);
-            }
-            if (pid == 0)
-            { // Child
-                printf("Child begins\n");
+
+			// Do nothing if parent
+            if (pid != 0) { wait(pid); }
+
+            else
+            {
                 // Open file
-                if ((fd = open(argv[i], O_RDWR)) >= 0)
+                if ((fd = open(argv[i], O_RDWR)) == -1)
                 {
-                    char *buf = malloc(WIDTH * WIDTH);
-                    char *temp = malloc(WIDTH * WIDTH);
-
-                    // read number of bytes in the line (not counting spaces?) (read until \n)
-                    int bytes_read = read(fd, buf, (WIDTH * WIDTH));
-                    printf("Bytes Read: %d\n", bytes_read);
-                    if (bytes_read == -1)
-                    {
-                        perror("Read failed\n");
-                    }
-                    else
-                    {
-                        int current = 0;
-                        for (int i = 0; i < WIDTH; i++)
-                        {
-                            printf("%d\n", i);
-                            for (int j = 0; j < WIDTH; j++)
-                            {
-                                int slot = (i * WIDTH) + j;
-                                if (buf[current] != '\n')
-                                {
-                                    temp[slot] = buf[current];
-                                }
-                                else
-                                {
-                                    for (int k = 0; k < WIDTH - j; k++)
-                                    {
-                                        temp[slot + k] = '0';
-                                    }
-
-                                    j = WIDTH;
-                                }
-                                current++;
-
-                                if (j == WIDTH - 1)
-                                {
-                                    // check if at end of line in file, moves to next line
-                                    while (buf[current] != '\n')
-                                    {
-                                        current++;
-                                    }
-                                    current++;
-                                }
-                            }
-                            printf("%d\n", i);
-                        }
-
-                        temp[WIDTH * WIDTH] = '\0';
-                        close(fd);
-                        fd = open("/dev/mapDriver", O_RDWR);
-                        if (fd == -1)
-                        {
-                            perror("Error\n");
-                            exit(0);
-                        }
-                        int bytes_written = write(fd, temp, (WIDTH * WIDTH));
-                        printf("Bytes Written: %d\n", bytes_written);
-                        if (bytes_written == -1)
-                            perror("Write not right\n");
-                    }
-                    printf("%s\n", "Close");
-                    // close(fd);
-                    //  Print the new buffer
-                    char *toPrint = malloc(WIDTH * WIDTH);
-                    bytes_read = read(fd, toPrint, (WIDTH * WIDTH));
-                    printf("Bytes Read: %d\n", bytes_read);
-                    printf("%s\n", toPrint);
-                    close(fd);
+                    perror("Error opening file");
+                    exit(-1);
                 }
-                else
+
+                char *buf = malloc(WIDTH * WIDTH), *temp = malloc(WIDTH * WIDTH);
+		
+                // Read file
+                if (read(fd, buf, (WIDTH * WIDTH)) == -1)
                 {
-                    perror("open(\"/dev/mapDriver\") failed\n");
-                    exit(1);
+                    perror("Read failed\n");
+					close(fd);
+					exit(-1);
                 }
+
+                int currentIndex = 0, fileIndex = 0;
+				bool lineEnded = false, fileEnded = false;
+
+                for (int i = 0; i < WIDTH; i++)
+                {
+					lineEnded = false;
+
+                    for (int j = 0; j < WIDTH; j++)
+                    {
+						// If line or file ended, just add 0s
+						if(fileEnded || lineEnded)
+						{
+							temp[currentIndex] = '0';
+						}
+
+						// When file ends, just add 0s
+						else if(buf[fileIndex] == '\0')
+						{
+							fileEnded = true;
+							temp[currentIndex] = '0';
+						}
+
+						// When line ends, fill lines with 0s
+						else if (buf[fileIndex] == '\n')
+						{
+							lineEnded = true;
+							temp[currentIndex] = '0';
+						}
+
+						// Otherwise just copy over
+						else
+						{
+							temp[currentIndex] = buf[fileIndex];
+							fileIndex++;
+						}
+
+						currentIndex++;
+                    }
+
+					// If line ended, move to next line
+					if(lineEnded) { fileIndex++; }
+
+					// Add newline
+					temp[currentIndex - 1] = '\n';
+                }
+
+				// Add null terminator
+                temp[WIDTH * WIDTH] = '\0';
+
+                close(fd);
+
+				// Open driver
+                fd = open("/dev/mapDriver", O_RDWR);
+                if (fd == -1)
+                {
+                    perror("Error opening driver");
+                    exit(-1);
+                }
+
+				// Write to driver
+                if (write(fd, temp, (WIDTH * WIDTH)) == -1)
+				{
+					perror("Error writing to driver");
+					exit(-1);
+				}
+
+                // Print the new map
+                char *toPrint = malloc(WIDTH * WIDTH);
+
+				// Read from driver
+				if(read(fd, toPrint, (WIDTH * WIDTH)) < 0)
+				{
+					perror("Error reading driver");
+					exit(-1);
+				}
+
+                printf("%s\n", toPrint);
+                close(fd);
+				exit(0);
             }
         }
     }
+
+	// If no given files, just use shell script
     else
     {
-        // fork then,
-        // execve
         pid_t pid = fork();
-        if (pid != 0)
-        { // Parent
-            // Nothing goes here
-            wait(pid);
-        }
+
+		// Parent does nothing
+        if (pid != 0) { wait(pid); }
+
         else
-        { // Child
+        {
             execve("genmap.sh", argv, envp);
+			exit(0);
         }
     }
+
     exit(0);
 }
