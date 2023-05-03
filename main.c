@@ -154,6 +154,17 @@ int main(int argc, char *argv[], char *envp[])
                     exit(-1);
                 } else {
                     printf("Zeroed out map\n");
+                    // Print the new map
+                    char *aPrint = malloc(WIDTH * WIDTH);
+
+                    // Read from driver
+                    if (read(fd, aPrint, (WIDTH * WIDTH)) < 0)
+                    {
+                        perror("Error reading driver");
+                        exit(-1);
+                    }
+
+                    printf("%s\n", aPrint);
                 }
 
                 // Close driver
