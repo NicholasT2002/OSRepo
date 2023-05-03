@@ -8,23 +8,25 @@
 #include <stdbool.h>
 #include "common.h"
 
-int main(int argc, char* argv[], char* envp[])
+int main(int argc, char *argv[], char *envp[])
 {
     // Add SIGCHLD Handler
     signal(SIGCHLD, SIG_IGN);
 
     int fd;
 
-	// If we got a file, turn it into map
+    // If we got a file, turn it into map
     if (argc > 1)
     {
         for (int i = 1; i < argc; i++)
         {
             pid_t pid = fork();
 
-			// Do nothing if parent
-            if (pid != 0) { wait(pid); }
-
+            // Do nothing if parent
+            if (pid != 0)
+            {
+                wait(pid);
+            }
             else
             {
                 // Open file
@@ -35,67 +37,70 @@ int main(int argc, char* argv[], char* envp[])
                 }
 
                 char *buf = malloc(WIDTH * WIDTH), *temp = malloc(WIDTH * WIDTH);
-		
+
                 // Read file
                 if (read(fd, buf, (WIDTH * WIDTH)) == -1)
                 {
                     perror("Read failed\n");
-					close(fd);
-					exit(-1);
+                    close(fd);
+                    exit(-1);
                 }
 
                 int currentIndex = 0, fileIndex = 0;
-				bool lineEnded = false, fileEnded = false;
+                bool lineEnded = false, fileEnded = false;
 
                 for (int i = 0; i < WIDTH; i++)
                 {
-					lineEnded = false;
+                    lineEnded = false;
 
                     for (int j = 0; j < WIDTH; j++)
                     {
-						// If line or file ended, just add 0s
-						if(fileEnded || lineEnded)
-						{
-							temp[currentIndex] = '0';
-						}
+                        // If line or file ended, just add 0s
+                        if (fileEnded || lineEnded)
+                        {
+                            temp[currentIndex] = '0';
+                        }
 
-						// When file ends, just add 0s
-						else if(buf[fileIndex] == '\0')
-						{
-							fileEnded = true;
-							temp[currentIndex] = '0';
-						}
+                        // When file ends, just add 0s
+                        else if (buf[fileIndex] == '\0')
+                        {
+                            fileEnded = true;
+                            temp[currentIndex] = '0';
+                        }
 
-						// When line ends, fill lines with 0s
-						else if (buf[fileIndex] == '\n')
-						{
-							lineEnded = true;
-							temp[currentIndex] = '0';
-						}
+                        // When line ends, fill lines with 0s
+                        else if (buf[fileIndex] == '\n')
+                        {
+                            lineEnded = true;
+                            temp[currentIndex] = '0';
+                        }
 
-						// Otherwise just copy over
-						else
-						{
-							temp[currentIndex] = buf[fileIndex];
-							fileIndex++;
-						}
+                        // Otherwise just copy over
+                        else
+                        {
+                            temp[currentIndex] = buf[fileIndex];
+                            fileIndex++;
+                        }
 
-						currentIndex++;
+                        currentIndex++;
                     }
 
-					// If line ended, move to next line
-					if(lineEnded) { fileIndex++; }
+                    // If line ended, move to next line
+                    if (lineEnded)
+                    {
+                        fileIndex++;
+                    }
 
-					// Add newline
-					temp[currentIndex - 1] = '\n';
+                    // Add newline
+                    temp[currentIndex - 1] = '\n';
                 }
 
-				// Add null terminator
+                // Add null terminator
                 temp[WIDTH * WIDTH] = '\0';
 
                 close(fd);
 
-				// Open driver
+                // Open driver
                 fd = open("/dev/mapDriver", O_RDWR);
                 if (fd == -1)
                 {
@@ -103,42 +108,76 @@ int main(int argc, char* argv[], char* envp[])
                     exit(-1);
                 }
 
-				// Write to driver
+                // Write to driver
                 if (write(fd, temp, (WIDTH * WIDTH)) == -1)
-				{
-					perror("Error writing to driver");
-					exit(-1);
-				}
+                {
+                    perror("Error writing to driver");
+                    exit(-1);
+                }
 
                 // Print the new map
                 char *toPrint = malloc(WIDTH * WIDTH);
 
-				// Read from driver
-				if(read(fd, toPrint, (WIDTH * WIDTH)) < 0)
-				{
-					perror("Error reading driver");
-					exit(-1);
-				}
+                // Read from driver
+                if (read(fd, toPrint, (WIDTH * WIDTH)) < 0)
+                {
+                    perror("Error reading driver");
+                    exit(-1);
+                }
 
                 printf("%s\n", toPrint);
+
+                /* Test ioctl() options
+                code 2: allow resetting the map back to its original default (all blank except the area pre-filled with the static initials map).
+                code 1: zero-out the entire buffer (with resetting the lengths and the pointer).
+                code 3: check map for consistency and report of it isn’t consistent.
+                */
+                if (ioctl(fd, 2) == -1)
+                {
+                    perror("Error resetting map");
+                    exit(-1);
+                } else {
+                    printf("Reset map\n");
+                }
+
+                if (ioctl(fd, 3) == -1)
+                {
+                    perror("Error checking map");
+                    exit(-1);
+                } else {
+                    printf("Checked map\n");
+                }
+
+                if (ioctl(fd, 1) == -1)
+                {
+                    perror("Error zeroing out map");
+                    exit(-1);
+                } else {
+                    printf("Zeroed out map\n");
+                }
+
+                // Close driver
                 close(fd);
-				exit(0);
+                exit(0);
             }
         }
     }
 
-	// If no given files, just use shell script
+    // If no given files, just use shell script
     else
     {
         pid_t pid = fork();
 
-		// Parent does nothing
-        if (pid != 0) { wait(pid); }
+        // Parent does nothing
+        if (pid != 0)
+        {
+            wait(pid);
+        }
 
         else
         {
             execve("genmap.sh", argv, envp);
-			exit(0);
+            exit(0);
         }
     }
 

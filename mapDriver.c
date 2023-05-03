@@ -248,23 +248,24 @@ struct file *file;
 uint cmd;
 unsigned long arg;
 {
-	char *temp;
-
+	//char *temp;
+	printk("cmd: %d\n", cmd);
+	printk("arg: %lu\n", arg);
 	switch (cmd)
 	{
 	case 1:
-		memset(status.buf, 0, sizeof(status.buf));
+		memset(status.buf, "0", DRV_BUF_SIZE);
 		break;
 
 	case 2:
-		memcpy(status.buf, static_art, sizeof(static_art));
-		status.buf_length = 2500;
+		memcpy(status.buf, static_art, DRV_BUF_SIZE);
+		status.buf_length = strlen(static_art);
 		status.buf_ptr = NULL;
 		break;
 	case 3:
 		int width = 0;
 		int count = 0;
-		temp = status.buf;
+		char *temp = status.buf;
 		while (*temp && *temp != '\n')
 		{
 			width++;
@@ -321,7 +322,7 @@ int init_module(void)
 	}
 
 	printk(
-		"Registeration is a success. The major device number is %d.\n",
+		"Registration is a success. The major device number is %d.\n",
 		status.major);
 
 	printk(

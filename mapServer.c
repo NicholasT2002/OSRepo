@@ -86,8 +86,9 @@ int main(int argc, char * argv[])
 				char* err_msg = "Failed to receive client message";
 
 				msg->c = 'E';
-				msg->width = strlen(err_msg) + 1;				
+				msg->width = strlen(err_msg) + 1;
 
+                // Copy error message into message struct
                 for (int i = 0; i < strlen(err_msg); i++)
 				{
 					msg->message[i] = err_msg[i];
@@ -109,8 +110,9 @@ int main(int argc, char * argv[])
 				char* err_msg = "Message is in incorrect format";
 
 				msg->c = 'E';
-				msg->width = strlen(err_msg) + 1;				
+				msg->width = strlen(err_msg) + 1;
 
+                // Copy error message into message struct
                 for (int i = 0; i < strlen(err_msg); i++)
 				{
 					msg->message[i] = err_msg[i];

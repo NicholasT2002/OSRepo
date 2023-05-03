@@ -11,3 +11,4 @@ mapDriver-test
 mapServer.h.gch
 mapServer
 mapClient
+*.log
